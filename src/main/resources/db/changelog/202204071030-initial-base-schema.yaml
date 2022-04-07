@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - changeSet:
+      id: initial base schema
+      author: gubin
+
+      changes:
+        - sql:
+            sql: create type status as enum ('CANCELED', 'SETTLED');
+
+        - sql:
+            sql: create type operation as enum ('INCOME', 'OUTCOME');
+
+        - createTable:
+            tableName: wallet
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: debit_balance
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: credit_balance
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: transaction
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: wallet_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: transaction_wallet_id_fk
+                    references: wallet(id)
+              - column:
+                  name: sum
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: operation
+                  type: operation
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: status
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+
+

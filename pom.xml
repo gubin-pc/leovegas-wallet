@@ -131,8 +131,10 @@
                 <version>0.31.0</version>
                 <configuration>
                     <verbose>true</verbose>
+                    <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
                     <images>
                         <image>
+                            <alias>${project.artifactId}</alias>
                             <name>${project.artifactId}:${project.version}</name>
                             <build>
                                 <from>openjdk:17-alpine</from>
@@ -141,22 +143,23 @@
                                 </assembly>
                                 <cmd>java -jar maven/${project.artifactId}-${project.version}.jar</cmd>
                                 <ports>
-                                    <port>8080/tcp</port>
+                                    <port>${service.port}/tcp</port>
                                 </ports>
                             </build>
                             <run>
                                 <env>
                                     <POSTGRES_PASSWORD>postgres</POSTGRES_PASSWORD>
-                                    <POSTGERS_USER>postgres</POSTGERS_USER>
-                                    <POSTGERS_POST>${postgres.port}</POSTGERS_POST>
+                                    <POSTGRES_USER>postgres</POSTGRES_USER>
+                                    <POSTGRES_PORT>${postgres.port}</POSTGRES_PORT>
                                 </env>
                                 <ports>
-                                    <port>${service.port}:8080</port>
+                                    <port>${service.port}</port>
                                 </ports>
+                                <net>host</net>
                             </run>
                         </image>
                         <image>
-                            <alias>database</alias>
+                            <alias>postgres</alias>
                             <name>postgres:11</name>
                             <run>
                                 <ports>
@@ -164,7 +167,7 @@
                                 </ports>
                                 <env>
                                     <POSTGRES_PASSWORD>postgres</POSTGRES_PASSWORD>
-                                    <POSTGERS_USER>postgres</POSTGERS_USER>
+                                    <POSTGRES_USER>postgres</POSTGRES_USER>
                                 </env>
                                 <wait>
                                     <log>database system is ready to accept connections</log>

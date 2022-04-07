@@ -9,9 +9,6 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
-  liquibase:
-    enabled: false
-
 logging:
   file:
     name: application.main.log
