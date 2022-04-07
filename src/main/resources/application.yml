@@ -1,0 +1,17 @@
+server:
+  port: 8080
+  shutdown: graceful
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:${POSTGRES_PORT:5432}/postgres?stringtype=unspecified
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: false
+
+logging:
+  file:
+    name: application.main.log
