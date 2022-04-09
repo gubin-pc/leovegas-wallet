@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>me.gubin</groupId>
+    <groupId>org.leovegas</groupId>
     <artifactId>leovegas-wallet</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>leovegas-wallet</name>
@@ -42,6 +42,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>23.0.0</version>
+        </dependency>
+
         <!--    Spring    -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -54,6 +60,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <!-- Documentation -->
@@ -84,6 +94,11 @@
 
         <!--    Testing    -->
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
@@ -102,11 +117,23 @@
 
 
     <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -151,10 +178,8 @@
                                     <POSTGRES_PASSWORD>postgres</POSTGRES_PASSWORD>
                                     <POSTGRES_USER>postgres</POSTGRES_USER>
                                     <POSTGRES_PORT>${postgres.port}</POSTGRES_PORT>
+                                    <SERVICE_PORT>${service.port}</SERVICE_PORT>
                                 </env>
-                                <ports>
-                                    <port>${service.port}</port>
-                                </ports>
                                 <net>host</net>
                             </run>
                         </image>

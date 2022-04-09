@@ -4,8 +4,6 @@ databaseChangeLog:
       author: gubin
 
       changes:
-        - sql:
-            sql: create type status as enum ('CANCELED', 'SETTLED');
 
         - sql:
             sql: create type operation as enum ('INCOME', 'OUTCOME');
@@ -20,7 +18,7 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
-                  name: user_id
+                  name: player_id
                   type: BIGINT
                   constraints:
                     nullable: false
@@ -33,6 +31,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: credit_balance
+                  type: BIGINT
+                  defaultValue: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
                   type: BIGINT
                   defaultValue: 0
                   constraints:
@@ -55,7 +59,7 @@ databaseChangeLog:
                     foreignKeyName: transaction_wallet_id_fk
                     references: wallet(id)
               - column:
-                  name: sum
+                  name: amount
                   type: BIGINT
                   defaultValue: 0
                   constraints:
@@ -66,15 +70,8 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: status
-                  type: status
-                  constraints:
-                    nullable: false
-              - column:
                   name: created_at
                   type: timestamp
                   defaultValue: now()
                   constraints:
                     nullable: false
-
-
