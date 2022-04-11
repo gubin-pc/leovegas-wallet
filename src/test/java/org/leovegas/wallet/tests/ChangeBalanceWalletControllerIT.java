@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.leovegas.wallet.TestUtils.*;
-import static org.leovegas.wallet.utils.IdGenerator.*;
-import static org.springframework.http.MediaType.*;
+import static org.leovegas.wallet.TestUtils.generatePlayerId;
+import static org.leovegas.wallet.utils.IdGenerator.generateWalletId;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
 
@@ -60,7 +60,7 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
             TransactionView expectedTransactionView = new TransactionView(
                     transactionId,
                     amount,
-                    Operation.OUTCOME,
+                    Operation.DEBIT,
                     Instant.now()
             );
 
@@ -69,13 +69,18 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
             walletDao.insert(wallet);
 
             //when
-            webTestClient.post()
+            TransactionView actualTransactionView = webTestClient.post()
                     .uri("/players/{playerId}/wallet/debit", playerId)
                     .bodyValue(new WalletOperationRequest(transactionId, amount))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody(TransactionView.class)
-                    .isEqualTo(expectedTransactionView);
+                    .returnResult()
+                    .getResponseBody();
+
+            assertEquals(expectedTransactionView.id(), actualTransactionView.id());
+            assertEquals(expectedTransactionView.amount(), actualTransactionView.amount());
+            assertEquals(expectedTransactionView.operation(), actualTransactionView.operation());
 
             webTestClient.get()
                     .uri("/players/{playerId}/wallet", playerId)
@@ -100,13 +105,6 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
                     generateWalletId(),
                     playerId
             );
-            final TransactionView expectedTransactionView = new TransactionView(
-                    transactionId,
-                    amount,
-                    Operation.OUTCOME,
-                    Instant.now()
-            );
-
 
             //then
             walletDao.insert(wallet);
@@ -139,12 +137,7 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
                     generateWalletId(),
                     playerId
             );
-            final TransactionView expectedTransactionView = new TransactionView(
-                    transactionId,
-                    amount,
-                    Operation.OUTCOME,
-                    Instant.now()
-            );
+
             final String walletOperationRawRequest = mapper.writeValueAsString(Map.of(
                     "transactionId", transactionId,
                     "amount", amount
@@ -189,22 +182,25 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
             TransactionView expectedTransactionView = new TransactionView(
                     transactionId,
                     amount,
-                    Operation.INCOME,
+                    Operation.CREDIT,
                     Instant.now()
             );
             walletDao.insert(wallet);
 
 
-
             //when
             //then
-            webTestClient.post()
+            TransactionView actualTransactionView = webTestClient.post()
                     .uri("/players/{playerId}/wallet/credit", playerId)
                     .bodyValue(new WalletOperationRequest(transactionId, amount))
                     .exchange()
                     .expectStatus().isOk()
                     .expectBody(TransactionView.class)
-                    .isEqualTo(expectedTransactionView);
+                    .returnResult()
+                    .getResponseBody();
+            assertEquals(expectedTransactionView.id(), actualTransactionView.id());
+            assertEquals(expectedTransactionView.amount(), actualTransactionView.amount());
+            assertEquals(expectedTransactionView.operation(), actualTransactionView.operation());
 
             webTestClient.get()
                     .uri("/players/{playerId}/wallet", playerId)
@@ -232,7 +228,7 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
             final TransactionView expectedTransactionView = new TransactionView(
                     transactionId,
                     amount,
-                    Operation.INCOME,
+                    Operation.CREDIT,
                     Instant.now()
             );
             final String walletOperationRawRequest = mapper.writeValueAsString(Map.of(
@@ -270,18 +266,13 @@ public class ChangeBalanceWalletControllerIT extends AbstractIntegrationTest {
         final UUID walletId = generateWalletId();
         final BigInteger amount = new BigInteger("5");
         final Wallet wallet = new Wallet(walletId, playerId);
-        TransactionView expectedTransactionView = new TransactionView(
-                transactionId,
-                amount,
-                Operation.INCOME,
-                Instant.now()
-        );
+
 
         walletDao.insert(wallet);
         transactionDao.insert(new Transaction(transactionId,
                 walletId,
                 new BigInteger("50"),
-                Operation.INCOME
+                Operation.CREDIT
         ));
 
         //when

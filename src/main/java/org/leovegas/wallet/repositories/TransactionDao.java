@@ -48,7 +48,7 @@ public class TransactionDao {
         return jdbcTemplate.query(
                 "SELECT t.* FROM transaction t " +
                         "JOIN wallet w on w.id = t.wallet_id " +
-                        "WHERE player_id = :player_id " + whereClause +
+                        "WHERE player_id = :player_id " + whereClause + " " +
                         "ORDER BY created_at",
                 new MapSqlParameterSource()
                         .addValue("player_id", playerId)

@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.leovegas.wallet.utils.Preconditions.*;
-import static org.springframework.http.MediaType.*;
+import static org.leovegas.wallet.utils.Preconditions.require;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/players")
@@ -51,12 +51,12 @@ public class WalletController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) final LocalDate to
     ) {
         if (to != null) {
-            require( from != null, () ->  "'to' date can't be use without 'from' date");
-            require(from.isBefore(to), () ->  "'from' date should be before 'to' date");
-            return historyService.getHistory(playerId, from, to);
-        } else {
-            return historyService.getHistory(playerId, from, null);
+            require(from != null, () -> "'to' date can't be used without 'from' date");
+            require(!from.isAfter(to), () -> "'from' date should be before 'to' date");
         }
+
+        return historyService.getHistory(playerId, from, to);
+
     }
 
     @PostMapping(
@@ -72,7 +72,7 @@ public class WalletController {
                 playerId,
                 operationRequest.transactionId(),
                 operationRequest.amount(),
-                Operation.INCOME
+                Operation.CREDIT
         );
     }
 
@@ -89,7 +89,7 @@ public class WalletController {
                 playerId,
                 operationRequest.transactionId(),
                 operationRequest.amount(),
-                Operation.OUTCOME
+                Operation.DEBIT
         );
 
     }

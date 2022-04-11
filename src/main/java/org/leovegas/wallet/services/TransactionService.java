@@ -47,8 +47,8 @@ public class TransactionService {
                     operation
             ));
             switch (operation) {
-                case INCOME -> walletOperationService.creditBalance(playerId, amount);
-                case OUTCOME -> walletOperationService.debitBalance(playerId, amount);
+                case CREDIT -> walletOperationService.creditBalance(playerId, amount);
+                case DEBIT -> walletOperationService.debitBalance(playerId, amount);
             }
             return transaction.mapTo(t -> new TransactionView(
                     t.id(),

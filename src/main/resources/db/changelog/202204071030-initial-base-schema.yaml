@@ -6,7 +6,7 @@ databaseChangeLog:
       changes:
 
         - sql:
-            sql: create type operation as enum ('INCOME', 'OUTCOME');
+            sql: create type operation as enum ('CREDIT', 'DEBIT');
 
         - createTable:
             tableName: wallet

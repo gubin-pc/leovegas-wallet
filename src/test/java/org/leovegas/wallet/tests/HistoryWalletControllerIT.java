@@ -3,27 +3,33 @@ package org.leovegas.wallet.tests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.leovegas.wallet.AbstractIntegrationTest;
+import org.leovegas.wallet.controllers.SimpleControllerAdvice;
 import org.leovegas.wallet.models.Operation;
 import org.leovegas.wallet.models.domains.Transaction;
 import org.leovegas.wallet.models.domains.Wallet;
 import org.leovegas.wallet.models.views.TransactionView;
 import org.leovegas.wallet.repositories.TransactionDao;
 import org.leovegas.wallet.repositories.WalletDao;
+import org.opentest4j.AssertionFailedError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.leovegas.wallet.TestUtils.generatePlayerId;
 import static org.leovegas.wallet.TestUtils.generateTransactionId;
 import static org.leovegas.wallet.utils.IdGenerator.generateWalletId;
 
 public class HistoryWalletControllerIT extends AbstractIntegrationTest {
+
+    private static final Logger log = LoggerFactory.getLogger(SimpleControllerAdvice.class);
 
     @Autowired
     private WebTestClient webTestClient;
@@ -47,25 +53,25 @@ public class HistoryWalletControllerIT extends AbstractIntegrationTest {
                         generateTransactionId(),
                         walletId,
                         BigInteger.ONE,
-                        Operation.INCOME
+                        Operation.CREDIT
                 ),
                 new Transaction(
                         generateTransactionId(),
                         walletId,
                         BigInteger.ONE,
-                        Operation.OUTCOME
+                        Operation.DEBIT
                 ),
                 new Transaction(
                         generateTransactionId(),
                         walletId,
                         BigInteger.ONE,
-                        Operation.INCOME
+                        Operation.CREDIT
                 ),
                 new Transaction(
                         generateTransactionId(),
                         walletId,
                         BigInteger.ONE,
-                        Operation.OUTCOME
+                        Operation.DEBIT
                 )
         );
 
@@ -73,7 +79,7 @@ public class HistoryWalletControllerIT extends AbstractIntegrationTest {
 
 
         //when
-        List<TransactionView> transactionViews = webTestClient.get()
+        List<TransactionView> actualList = webTestClient.get()
                 .uri("/players/{playerId}/wallet/history", playerId)
                 .exchange()
                 .expectStatus().isOk()
@@ -89,8 +95,19 @@ public class HistoryWalletControllerIT extends AbstractIntegrationTest {
                         transaction.operation(),
                         transaction.createdAt()
                 )
-        ).collect(Collectors.toList());
+        ).toList();
 
-        assertIterableEquals(expectedList, transactionViews);
+        assertEquals(expectedList.size(), actualList.size());
+        for (TransactionView expected : expectedList) {
+            TransactionView actual = findById(actualList, expected.id()).orElseThrow(() -> new AssertionFailedError(null, expected, null));
+            assertEquals(expected.id(), actual.id());
+            assertEquals(expected.amount(), actual.amount());
+            assertEquals(expected.operation(), actual.operation());
+        }
     }
+
+    private Optional<TransactionView> findById(List<TransactionView> actualList, int id) {
+        return actualList.stream().filter(tv -> tv.id() == id).findFirst();
+    }
+
 }

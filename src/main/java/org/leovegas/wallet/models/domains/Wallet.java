@@ -4,7 +4,8 @@ import java.math.BigInteger;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static org.leovegas.wallet.utils.Preconditions.*;
+import static org.leovegas.wallet.utils.Preconditions.require;
+import static org.leovegas.wallet.utils.Preconditions.requireNotNull;
 
 public record Wallet(
         UUID id,

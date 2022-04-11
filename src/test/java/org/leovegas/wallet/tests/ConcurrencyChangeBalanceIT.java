@@ -1,30 +1,22 @@
 package org.leovegas.wallet.tests;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.leovegas.wallet.AbstractIntegrationTest;
-import org.leovegas.wallet.TestUtils;
-import org.leovegas.wallet.models.Operation;
-import org.leovegas.wallet.models.domains.Transaction;
 import org.leovegas.wallet.models.domains.Wallet;
-import org.leovegas.wallet.models.views.TransactionView;
 import org.leovegas.wallet.models.views.WalletOperationRequest;
 import org.leovegas.wallet.models.views.WalletView;
 import org.leovegas.wallet.repositories.WalletDao;
-import org.leovegas.wallet.utils.IdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.leovegas.wallet.TestUtils.*;
-import static org.leovegas.wallet.utils.IdGenerator.*;
+import static org.leovegas.wallet.TestUtils.generatePlayerId;
+import static org.leovegas.wallet.TestUtils.generateTransactionId;
+import static org.leovegas.wallet.utils.IdGenerator.generateWalletId;
 
 public class ConcurrencyChangeBalanceIT extends AbstractIntegrationTest {
 

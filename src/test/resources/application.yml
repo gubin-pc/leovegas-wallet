@@ -2,10 +2,3 @@ server:
   port: 8080
   shutdown: graceful
 
-spring:
-  datasource:
-    url:
-    username:
-    password:
-    driver-class-name: org.postgresql.Driver
-

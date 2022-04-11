@@ -1,11 +1,8 @@
 package org.leovegas.wallet.services;
 
-import org.leovegas.wallet.controllers.SimpleControllerAdvice;
 import org.leovegas.wallet.models.domains.Wallet;
 import org.leovegas.wallet.repositories.WalletDao;
 import org.leovegas.wallet.utils.IdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
